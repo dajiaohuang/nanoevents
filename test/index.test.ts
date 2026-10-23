@@ -5,7 +5,7 @@ import { createNanoEvents } from '../index.js'
 
 test('is empty from the beginning', () => {
   let ee = createNanoEvents()
-  deepStrictEqual(ee.events, {})
+  deepStrictEqual(Object.getPrototypeOf(ee.events), null)
 })
 
 test('adds listeners', () => {
@@ -18,6 +18,23 @@ test('adds listeners', () => {
   deepStrictEqual(Object.keys(ee.events), ['one', 'two'])
   equal(ee.events.one?.length, 1)
   equal(ee.events.two?.length, 2)
+})
+
+test('supports inherited property names as events', () => {
+  let ee = createNanoEvents()
+  let calls: string[] = []
+
+  for (let event of ['__proto__', 'constructor', 'toString']) {
+    let unbind = ee.on(event, () => {
+      calls.push(event)
+    })
+    ee.emit(event)
+    unbind()
+    ee.emit(event)
+  }
+
+  deepStrictEqual(calls, ['__proto__', 'constructor', 'toString'])
+  deepStrictEqual(Object.keys(ee.events), ['__proto__', 'constructor', 'toString'])
 })
 
 test('calls listener', () => {
@@ -60,7 +77,7 @@ test('unbinds listener', () => {
 test('calls unbind after cleaning events', () => {
   let ee = createNanoEvents()
   let unbind = ee.on('event', () => undefined)
-  ee.events = {}
+  ee.events = Object.create(null)
   doesNotThrow(() => {
     unbind()
   })

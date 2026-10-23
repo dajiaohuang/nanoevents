@@ -2,7 +2,7 @@
 
 Simple and tiny event emitter library for JavaScript.
 
-- Only **108 bytes** (minified and brotlied).
+- Only **117 bytes** (minified and brotlied).
   It uses [Size Limit] to control size.
 - The `on` method returns `unbind` function. You don’t need to save
   callback to variable for `removeListener`.
@@ -226,7 +226,7 @@ class Ticker {
 emitter.on('event1', () => {})
 emitter.on('event2', () => {})
 
-emitter.events = {}
+emitter.events = Object.create(null)
 ```
 
 ## Usage With Frameworks

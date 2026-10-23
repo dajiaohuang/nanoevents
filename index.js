@@ -10,7 +10,7 @@ export let createNanoEvents = () => ({
       callbacks[i](...args)
     }
   },
-  events: {},
+  events: { __proto__: null },
   on(event, cb) {
     ;(this.events[event] ||= []).push(cb)
     return () => {
